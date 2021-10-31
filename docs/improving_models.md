@@ -10,7 +10,7 @@ By modifying the mesh in Hammer or modelling software and adding some more basic
 
 Timelapse example of this in Hammer:
 
-![timelapse-video](https://user-images.githubusercontent.com/24839375/139596266-c172c636-f4fc-4ba3-a4fa-e4b51c9b1ce4.mp4)
+https://user-images.githubusercontent.com/24839375/139596266-c172c636-f4fc-4ba3-a4fa-e4b51c9b1ce4.mp4
 
 ## Improving Hologram Material
 
