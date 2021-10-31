@@ -16,7 +16,7 @@ Layer0
 	//---- Hologram ----
 	g_flFadeEndDistance "90.000"
 	g_flFadeStartDistance "45.000"
-	g_flFresnelExponent "1.000"
+	g_flFresnelExponent "0.800"
 	g_flLineWidth "0.100"
 	g_vHologramColor "[0.400000 0.701961 1.000000 0.000000]"
 }

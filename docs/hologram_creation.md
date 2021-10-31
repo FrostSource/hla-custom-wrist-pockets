@@ -8,11 +8,12 @@ We want to make sure to save it in the correct location. The hologram model path
 
 The above floppy disk model is `models/props_discoverable/floppy_disk_download_internet.vmdl` so we save to `models/custom_wrist_pocket/props_discoverable/floppy_disk_download_internet_icon.vmdl`. The script uses this predictable naming scheme to procedurally load the correct model.
 
-Once created we can open the model up inside ModelDoc to add some necessary changes ([if you've never used ModelDoc I recommend reading the wiki pages](https://developer.valvesoftware.com/wiki/Half-Life:_Alyx_Workshop_Tools/Modeling)).
+Once created we can open the model with ModelDoc to add some necessary changes ([if you've never used ModelDoc I recommend reading the wiki pages](https://developer.valvesoftware.com/wiki/Half-Life:_Alyx_Workshop_Tools/Modeling)).
 
-To match the style of the base game the default material must be changed to a hologram style.
 
 ## Hologram Material
+
+To match the style of the base game the default material must be changed to a hologram style.
 
 Add a DefaultMaterialGroup node and search for `wrist hologram` in the material picker. Although the built-in materials are specific to the item they should look fine for a simple model. There are also 3 plain sample materials included in `models/custom_wrist_pocket/materials/` which the example holograms use. For this model I'm choosing `models/custom_wrist_pocket/materials/orange_icon_hologram.vmat`.
 
