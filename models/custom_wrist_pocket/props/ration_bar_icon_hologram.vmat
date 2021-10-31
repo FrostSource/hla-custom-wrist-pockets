@@ -1,0 +1,22 @@
+// THIS FILE IS AUTO-GENERATED
+
+Layer0
+{
+	shader "vr_wireframe_hologram.vfx"
+
+	//---- Rendering ----
+	F_DO_NOT_CAST_SHADOWS 1
+
+	//---- Color ----
+	TextureColor "models/custom_wrist_pocket_models/props/ration_bar_icon_color.png"
+
+	//---- Fog ----
+	g_bFogEnabled "0"
+
+	//---- Hologram ----
+	g_flFadeEndDistance "90.000"
+	g_flFadeStartDistance "45.000"
+	g_flFresnelExponent "0.200"
+	g_flLineWidth "0.100"
+	g_vHologramColor "[0.588235 0.145098 0.000000 0.000000]"
+}
