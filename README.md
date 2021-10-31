@@ -14,3 +14,7 @@ Contents:
 1. [Setting Up The Script](docs/script_setup.md)
 2. [Creating Hologram Models](docs/hologram_creation.md)
 3. [Improving Hologram Models](docs/improving_models.md)
+
+## Help
+
+If something needs attention or you just need some help with using this project, please don't hesitate to [start an issue](https://github.com/FrostSource/hla-custom-wrist-pockets/issues/new) or join the [discord](https://discord.gg/tKrYtN3qbx)
