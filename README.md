@@ -1,5 +1,7 @@
 # HLA Custom Wrist Pocket Holograms
 
+> This project is currently in Beta to make sure the way it works is suitable for the majority of developers. I am looking for feedback from developers implementing this system in their addon.
+
 This project aims to solve the issue of wrist holograms for custom props appearing as health pen syringes. Any prop that can be stored inside the wrist can now have a matching icon with very minimal effort.
 
 You can try the preview map on the workshop here: https://steamcommunity.com/sharedfiles/filedetails/?id=2637521776
