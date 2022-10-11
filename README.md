@@ -4,9 +4,13 @@
 
 This project aims to solve the issue of wrist holograms for custom props appearing as health pen syringes. Any prop that can be stored inside the wrist can now have a matching icon with very minimal effort.
 
-![readme_fixed](docs/img/readme_fixed.gif)
+<img src="docs/img/readme_syringe.gif" width="350" />
+<img src="docs/img/readme_fixed.gif" width="350" />
 
-![readme_syringe](docs/img/readme_syringe.gif)
+
+![readme_fixed](docs/img/readm_fixed.gif)
+
+![readme_syringe](docs/img/readm_syringe.gif)
 
 
 You can try the preview map on the workshop here: https://steamcommunity.com/sharedfiles/filedetails/?id=2637521776
