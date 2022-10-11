@@ -6,7 +6,7 @@
 
 This project aims to solve the issue of wrist holograms appearing as health pen syringes for custom props. Any prop that can be stored inside the wrist can now have a matching icon with very minimal effort.
 
-You can try the preview map on the workshop here: https://steamcommunity.com/sharedfiles/filedetails/?id=2637521776
+~~You can try the preview map on the workshop here: https://steamcommunity.com/sharedfiles/filedetails/?id=2637521776~~ Not updated until alpha ends.
 
 ## V2.0
 
@@ -26,7 +26,7 @@ Head to the [releases section](https://github.com/FrostSource/hla-custom-wrist-p
 
 Extract the downloaded zip directly into your addon content folder.
 
-**Important:** Move the `scripts/` folder from your addon's content directory into your addon's game directory.
+**Important:** Move the `scripts/` folder from your addons content directory into your addons game directory.
 ![](docs/img/moving_scripts_folder.gif)
 
 ## Using
