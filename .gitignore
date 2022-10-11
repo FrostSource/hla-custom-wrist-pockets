@@ -3,4 +3,3 @@
 __test*
 /maps/screenshot.vmap
 /release
-pack_releases.py
