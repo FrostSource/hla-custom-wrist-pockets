@@ -288,6 +288,10 @@ end
 local function PlayerStoredItemInItemHolder(data)
     -- print("Attempting to store model: "..data.item:GetModelName())
 
+    if vlua.find(IgnoredModels, data.item:GetModelName()) then
+        return
+    end
+
     -- This code needs to be delayed slightly because for some reason the holo model
     -- doesn't exist by the time this event is fired.
     -- Not sure what errors could pop up by a delayed response besides entity
