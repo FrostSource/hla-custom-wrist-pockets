@@ -19,3 +19,7 @@ RegisterWristModels({
     "models/props/choreo_office/gnome.vmdl",
     "models/props_interiors/waterbottle.vmdl",
 })
+
+IgnoreWristModels({
+    "models/props/interior_deco/tabletop_key01.vmdl",
+})
