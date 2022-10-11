@@ -39,7 +39,7 @@ To get our desired rotation we can add an `Attachment` called `wrist_angle` to t
 
 ### How do we find the correct angle for our model?
 
-Inside Hammer, place your prop down and select it, then face the camera towards the negative Y axis (away from the green arrow) while looking at your model, then rotate it to face towards the camera. Copy the transform angles to the attachment origin.
+Inside Hammer, place your prop down and select it, then face the camera towards the negative Y axis (opposite direction to the green arrow) while looking at your model, then rotate it to face towards the camera. Copy the transform angles to the attachment origin.
 
 ![](img/rotate_to_face_y.jpg)
 ![](img/copy_angles.png)
