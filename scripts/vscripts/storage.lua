@@ -447,17 +447,17 @@ else
     ---@param handle EntityHandle # Entity to load from.
     ---@param name string # Name the number was saved as.
     ---@param default? number # Optional default value.
-    ---@return number
+    ---@return number?
     function Storage.LoadNumber(handle, name, default)
         handle = resolveHandle(handle)
         local t = handle:GetContext(name..separator.."type")
         local value = handle:GetContext(name)
         if not value or t ~= "number" then
             Warn("Number " .. name .. " could not be loaded! ("..type(value)..", "..tostring(value)..")")
-            return default or 0
+            return default
         end
         if type(value) == "number" then return value end
-        return default or 0
+        return default
     end
 
     ---Load a boolean value.
@@ -480,13 +480,13 @@ else
     ---@param handle EntityHandle # Entity to save on.
     ---@param name string # Name the Vector was saved as.
     ---@param default? Vector # Optional default value.
-    ---@return Vector
+    ---@return Vector?
     function Storage.LoadVector(handle, name, default)
         handle = resolveHandle(handle)
         local t = handle:GetContext(name..separator.."type")
         if t ~= "vector" then
             Warn("Vector " .. name .. " could not be loaded!")
-            return default or Vector()
+            return default
         end
         local x = handle:GetContext(name .. ".x") or 0
         local y = handle:GetContext(name .. ".y") or 0
