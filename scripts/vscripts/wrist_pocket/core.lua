@@ -84,7 +84,7 @@ local USE_BASE_MODEL_FOR_UNREGISTERED = false
 
 ---If true the script will create holograms for unregistered models using custom particles.
 ---This is a V2 option that allows custom wrist holograms without any extra setup.
-local USE_PARTICLE_FOR_UNREGISTERED = false
+local USE_PARTICLE_FOR_UNREGISTERED = true
 
 ---If true the script will periodically update any wrist icons to use the transforms
 ---defined in their VMDL or through hammer. The think is needed because the game will
@@ -320,8 +320,8 @@ local function PlayerStoredItemInItemHolder(data)
             -- Using custom holo model.
             if vlua.find(RegisteredModels, last_released:GetModelName()) then
                 local replace_model = "models/custom_wrist_pocket" .. last_released:GetModelName():sub(7, -6) .. "_icon.vmdl"
-                -- print("Replacing wrist icon with", replace_model)
                 icon:SetModel(replace_model)
+                -- print("Replacing wrist icon with", replace_model)
 
             elseif USE_PARTICLE_FOR_UNREGISTERED then
                 -- NOTE: For some reason the particle will not appear on stored props
@@ -341,6 +341,7 @@ local function PlayerStoredItemInItemHolder(data)
                 StoredIconData[wrist_id].particle = createWristParticle(icon, pt_model, last_released:WristColor())
                 icon:SaveEntity("wrist_particle_model",pt_model)
                 icon:SetRenderAlpha(0)
+                -- print("Using particle")
 
             elseif USE_BASE_MODEL_FOR_UNREGISTERED then
                 -- print("Using base model because unregistered", last_released:GetModelName())
