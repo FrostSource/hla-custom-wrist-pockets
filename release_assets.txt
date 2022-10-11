@@ -1,0 +1,26 @@
+# and // can be used for comments
+# Folders will select all files and subfiles.
+# Wildcard (*) is not yet supported.
+#
+# Special Symbols
+# name:  - Define a release category.
+# ->path - Prepend all subsequent paths with this.
+# <-     - Stop prepending.
+
+custom_wrist_pocket:
+
+# Wrist pocket specific assets
+maps/prefabs/custom_wrist_pocket.vmap
+particles/wrist_pocket
+models/wrist_pocket
+models/custom_wrist_pocket/weapons/vr_alyxhealth
+scripts/vscripts/wrist_pocket
+scripts/vscripts/register_models_template.lua
+
+# Extravaganza files
+->scripts/vscripts/
+core.lua
+player.lua
+storage.lua
+extensions/
+<-
