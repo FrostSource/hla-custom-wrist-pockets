@@ -20,6 +20,6 @@ An example of this with Valve's keycard hologram. Left is with a custom material
 
 ![highlight_hologram](img/highlight_hologram.png)
 
-which uses this color texture:
+Which uses this color texture:
 
 ![keycard_hologram_highlight](img/keycard_hologram_highlight.png)
