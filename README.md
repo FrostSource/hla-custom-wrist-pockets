@@ -27,6 +27,7 @@ Head to the [releases section](https://github.com/FrostSource/hla-custom-wrist-p
 Extract the downloaded zip directly into your addon content folder.
 
 **Important:** Move the `scripts/` folder from your addon's content directory into your addon's game directory.
+![](docs/img/moving_scripts_folder.gif)
 
 ## Using
 

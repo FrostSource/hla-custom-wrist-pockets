@@ -287,7 +287,11 @@ def generate_releases():
 #endregion
 
 if __name__ == '__main__':
-    print()
-    assets = parse_assets()
-    print_dict(assets)
-    generate_releases()
+    try:
+        print()
+        assets = parse_assets()
+        print_dict(assets)
+        generate_releases()
+        input('')
+    except:
+        input('Error...')
