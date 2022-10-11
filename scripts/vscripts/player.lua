@@ -675,8 +675,8 @@ local function listenEventItemPickup(data)
     hand.LastClassGrabbed = data.item
     Player.LastItemGrabbed = ent_held
     Player.LastClassGrabbed = data.item
-    print("Held", hand:GetHandID(), hand.ItemHeld, hand.ItemHeld and hand.ItemHeld:GetModelName() or "")
-    print("LastDropped", hand:GetHandID(), hand.LastItemDropped, hand.LastItemDropped and hand.LastItemDropped:GetModelName() or "")
+    -- print("Held", hand:GetHandID(), hand.ItemHeld, hand.ItemHeld and hand.ItemHeld:GetModelName() or "")
+    -- print("LastDropped", hand:GetHandID(), hand.LastItemDropped, hand.LastItemDropped and hand.LastItemDropped:GetModelName() or "")
 
     if data.item == "item_hlvr_crafting_currency_small" or data.item == "item_hlvr_crafting_currency_large" then
         local resin = Player.Items.resin
@@ -741,8 +741,8 @@ local function listenEventItemReleased(data)
     Player.LastClassDropped = data.item
     hand.LastItemDropped = hand.ItemHeld
     hand.LastClassDropped = data.item
-    print("Held", hand:GetHandID(), hand.ItemHeld, hand.ItemHeld and hand.ItemHeld:GetModelName() or "")
-    print("LastDropped", hand:GetHandID(), hand.LastItemDropped, hand.LastItemDropped and hand.LastItemDropped:GetModelName() or "")
+    -- print("Held", hand:GetHandID(), hand.ItemHeld, hand.ItemHeld and hand.ItemHeld:GetModelName() or "")
+    -- print("LastDropped", hand:GetHandID(), hand.LastItemDropped, hand.LastItemDropped and hand.LastItemDropped:GetModelName() or "")
     hand.ItemHeld = nil
     -- Registered callback
     data.item_class = data.item
