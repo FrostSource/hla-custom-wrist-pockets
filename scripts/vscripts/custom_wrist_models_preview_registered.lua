@@ -2,9 +2,6 @@
     This script exists as an example for how to register your custom hologram models.
     These models are registered for `maps/custom_wrist_models_example.vmap`.
 
-    If your holograms never change between levels then you can simply put your
-    models inside `wrist_pocket/prefab.lua` instead.
-
     If you are strictly using dynamically generated holograms then none of this is necessary.
 ]]
 require "wrist_pocket.core"
