@@ -1,8 +1,6 @@
 /_bakeresourcecache/
 *bakeresourcecache.vpk
 __test*
-/.vscode/
-/scripts/vlua_globals.lua
 /maps/screenshot.vmap
 /release
 pack_releases.py
