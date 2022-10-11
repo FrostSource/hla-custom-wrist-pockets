@@ -30,9 +30,36 @@ Extract the downloaded zip directly into your addon content folder.
 
 ## Using
 
-Contents:
-1. [Setting Up The Script](docs/script_setup.md)
-2. [Creating Hologram Models](docs/hologram_creation.md)
+Drag `maps/prefabs/custom_wrist_pocket.vmap` into your map. For the basic system, you're done.
+
+Attributes can be defined in Hammer to add some flair and customization.
+
+The `AddAttribute` input can be sent to a storable prop with any of the following parameter overrides:
+
+| Attribute | Description |
+|---|---|
+| wrist_white | Set the hologram color to white. |
+| wrist_blue  | Set the hologram color to blue.  |
+| wrist_green | Set the hologram color to green. |
+
+![](docs/img/attribute_color.png)
+
+Custom transforms can be set with the input `RunScriptCode` and the following parameter overrides:
+| Code | Description |
+|---|---|
+| WristOrigin(x, y, z) | Set the local origin inside the wrist. Otherwise this is dynamically calculated.
+| WristAngle(x, y, z) | Set the local angle the inside the wrist. Very useful for thin props.
+| WristScale(x) | Set the local scale inside the wrist. Otherwise this is dynamically calculated.
+
+![](docs/img/hammer_transform.png)
+
+See the [custom model transforms](docs/hologram_creation.md#rotationorigin) section for more information about the values to use for these.
+
+
+## Guides
+
+1. [Creating Hologram Models](docs/hologram_creation.md)
+2. [Setting Up The Script](docs/script_setup.md)
 3. [Improving Hologram Models](docs/improving_models.md)
 
 ## Help
