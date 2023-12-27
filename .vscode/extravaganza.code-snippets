@@ -1,36 +1,36 @@
+/*
+	v2.0.1
+	https://github.com/FrostSource/hla_extravaganza
+*/
 {
-	/*
-		Util setups
-	*/
-
 	"Entity Base":{
 		"scope": "lua",
 		"prefix": ["Entity Base", "Base Entity"],
 		"body": [
 			"---@class ${1:EntityName} : EntityClass",
 			"local base, self = entity(\"${1:EntityName}\")",
-			"if self.Initiated then return end",
+			"if self and self.Initiated then return end",
 			"",
-			"---Called automatically on spawn.",
+			"$0",
+			"",
+			"---Called automatically on spawn",
 			"---@param spawnkeys CScriptKeyValues",
 			"function base:OnSpawn(spawnkeys)",
 			"end",
 			"",
 			"---Called automatically on activate.",
-			"---Any self values set here are automatically saved.",
+			"---Any self values set here are automatically saved",
 			"---@param loaded boolean",
 			"function base:OnReady(loaded)",
-			"\tif not loaded then",
-			"\t\tself:ResumeThink()",
-			"\tend",
 			"end",
 			"",
-			"---Main entity think function. Think state is saved between loads.",
+			"---Main entity think function. Think state is saved between loads",
 			"function base:Think()",
-			"\t",
 			"\treturn 0",
 			"end",
-			"$0",
+			"",
+			"--Used for classes not attached directly to entities",
+			"return base",
 		],
 		"description": "Code that most entity scripts should start with.",
 		"isFileTemplate": true
@@ -45,4 +45,22 @@
 		],
 		"description": "Adds local functions to private script scope to avoid environment pollution."
 	},
+
+	"Expose - Private":{
+		"scope": "lua",
+		"prefix": ["Expose (private)"],
+		"body": [
+			"thisEntity:GetPrivateScriptScope().${1:func} = ${1:func}"
+		],
+		"description": "Exposes a single local function to Hammer."
+	},
+
+	"Stop Second Execute":{
+		"scope": "lua",
+		"prefix": ["Stop second execute", "Fix second execute"],
+		"body": [
+			"if thisEntity then if thisEntity:GetPrivateScriptScope().__load then return else thisEntity:GetPrivateScriptScope().__load = true end else return end"
+		],
+		"description": "Stops the script from executing a second time when the game loads. Place at the top of the script."
+	}
 }

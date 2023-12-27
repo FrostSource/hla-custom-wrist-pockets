@@ -1,18 +1,22 @@
 --[[
-    v2.0.0
+    v3.0.0
     https://github.com/FrostSource/hla_extravaganza
 
-    This file contains utility functions to help reduce repetitive code
-    and add general miscellaneous functionality.
+    This file contains utility functions to help reduce repetitive code and add general miscellaneous functionality.
 
-    Load this file at game start using the following line:
-
-        require "util.util"
+    If not using `vscripts/core.lua`, load this file at game start using the following line:
+    
+    ```lua
+    require "util.util"
+    ```
 ]]
 
 Util = {}
+Util.version = "v3.0.0"
 
+---
 ---Convert vr_tip_attachment from a game event [1,2] into a hand id [0,1] taking into account left handedness.
+---
 ---@param vr_tip_attachment 1|2
 ---@return 0|1
 function Util.GetHandIdFromTip(vr_tip_attachment)
@@ -23,8 +27,10 @@ function Util.GetHandIdFromTip(vr_tip_attachment)
     return handId
 end
 
+---
 ---Estimates the nearest entity `position` with the targetname of `name`
 ---(or classname `class` if the name is blank).
+---
 ---@param name string
 ---@param class string
 ---@param position Vector
@@ -49,10 +55,13 @@ function Util.EstimateNearestEntity(name, class, position, radius)
     return ent
 end
 
+---
 ---Attempt to find a key in `tbl` pointing to `value`.
+---
 ---@param tbl table # The table to search.
 ---@param value any # The value to search for.
 ---@return unknown|nil # The key in `tbl` or nil if no `value` was found.
+---@deprecated # Functionally the same as `vlua.find`.
 function Util.FindKeyFromValue(tbl, value)
     for key, val in pairs(tbl) do
         if val == value then
@@ -62,7 +71,9 @@ function Util.FindKeyFromValue(tbl, value)
     return nil
 end
 
+---
 ---Attempt to find a key in `tbl` pointing to `value` by recursively searching nested tables.
+---
 ---@param tbl table # The table to search.
 ---@param value any # The value to search for.
 ---@param seen? table[] # List of tables that have already been searched.
@@ -81,46 +92,14 @@ local function _FindKeyFromValueDeep(tbl, value, seen)
     return nil
 end
 
+---
 ---Attempt to find a key in `tbl` pointing to `value` by recursively searching nested tables.
+---
 ---@param tbl table # The table to search.
 ---@param value any # The value to search for.
 ---@return unknown|nil # The key in `tbl` or nil if no `value` was found.
 function Util.FindKeyFromValueDeep(tbl, value)
     return _FindKeyFromValueDeep(tbl, value)
-end
-
----Add a function to the global scope with alternate casing styles.
----Makes a function easier to call from Hammer through I/O.
----@param func function # The function to sanitize.
----@param name? string # Optionally the name of the function for faster processing.
----@param scope? table # Optionally the explicit scope to put the sanitized functions in.
-function Util.SanitizeFunctionForHammer(func, name, scope)
-    local fenv = getfenv(func)
-    -- if name is empty then find the name
-    if name == "" or name == nil then
-        name = Util.FindKeyFromValueDeep(fenv, func)
-        -- if name is still empty after searching environment, search locals
-        if name == nil then
-            local i = 1
-            while true do
-                local val
-                name, val = debug.getlocal(2,i)
-                if name == nil or val == func then break end
-                i = i + 1
-            end
-            -- if name is still nil then function doesn't exist yet
-            if name == nil then
-                Warning("Trying to sanitize function ["..tostring(func).."] which doesn't exist in environment!\n")
-                return
-            end
-        end
-    end
-    fenv = scope or fenv
-    print("Sanitizing function '"..name.."' for Hammer in scope ["..tostring(fenv).."]")
-    fenv[name] = func
-    fenv[name:lower()] = func
-    fenv[name:upper()] = func
-    fenv[name:sub(1,1):upper()..name:sub(2)] = func
 end
 
 ---Returns the size of any table.
@@ -134,34 +113,74 @@ function Util.TableSize(tbl)
     return count
 end
 
----Remove a value from a table, returning it if it exists.
----@param tbl table
----@param value any
----@return any
-function Util.RemoveFromTable(tbl, value)
-    local i = vlua.find(tbl, value)
-    if i then
-        return table.remove(tbl, i)
-    end
-    return nil
-end
-
----Appends `array2` onto `array1` as a new array.
----Safe extend function alternative to `vlua.extend`.
----@param array1 any[]
----@param array2 any[]
-function Util.AppendArray(array1, array2)
-    array1 = vlua.clone(array1)
-    for i = 1, #array2 do
-        table.insert(array1, array2[i])
-    end
-    return array1
-end
-
+---
 ---Delay some code.
+---
 ---@param func function
----@param delay number?
+---@param delay? number
 function Util.Delay(func, delay)
     GetListenServerHost():SetContextThink(DoUniqueString("delay"), func, delay or 0)
 end
 
+---
+---Get a new `QAngle` from a `Vector`.
+---This simply transfers the raw values from one to the other.
+---
+---@param vec Vector
+---@return QAngle
+function Util.QAngleFromVector(vec)
+    return QAngle(vec.x, vec.y, vec.z)
+end
+
+---Create a constraint between two entity handles.
+---@param entity1 EntityHandle # First entity to attach.
+---@param entity2 EntityHandle|nil # Second entity to attach. Set nil to attach to world.
+---@param class? string # Class of constraint, default is `phys_constraint`.
+---@param properties? table # Key/value property table.
+---@return EntityHandle
+function Util.CreateConstraint(entity1, entity2, class, properties)
+    -- Cache original names
+    local name1 = entity1:GetName()
+    local name2 = entity2 and entity2:GetName() or ""
+
+    -- Assign unique names so constraint can find them on spawn
+    local uname1 = DoUniqueString("")
+    entity1:SetEntityName(uname1)
+    local uname2 = entity2 and DoUniqueString("") or ""
+    if entity2 then entity2:SetEntityName(uname2) end
+
+    properties = vlua.tableadd({attach1 = uname1, attach2 = uname2}, properties or {})
+    local constraint = SpawnEntityFromTableSynchronous(class or "phys_constraint", properties)
+
+    -- Restore original names now that constraint knows their handles
+    entity1:SetEntityName(name1)
+    if entity2 then entity2:SetEntityName(name2) end
+    return constraint
+end
+
+---Choose and return a random argument.
+---@generic T
+---@param ... T
+---@return T
+function Util.Choose(...)
+    local args = {...}
+    local numArgs = #args
+    if numArgs == 0 then
+        return nil
+    elseif numArgs == 1 then
+        return args[1]
+    else
+        return args[RandomInt(1, numArgs)]
+    end
+end
+
+---Turns a string of up to three numbers into a vector.
+---@param str string # Should have a format of "x y z"
+---@return Vector
+function Util.VectorFromString(str)
+    if type(str) ~= "string" then
+        return Vector()
+    end
+    local x, y, z = str:match("(%d+)[^%d]+(%d*)[^%d]+(%d*)")
+    return Vector(tonumber(x), tonumber(y), tonumber(z))
+end

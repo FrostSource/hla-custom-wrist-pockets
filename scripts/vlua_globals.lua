@@ -2,7 +2,7 @@
 ---@diagnostic disable: lowercase-global, deprecated, undefined-doc-name
 
 --[[
-    Version 2.0.3
+    Version 2.1.1
 
     This file helps intellisense in editors like Visual Studio Code by
     introducing definitions of all known VLua functions into the global scope.
@@ -46,35 +46,6 @@
 ---Combined entity handle type.
 ---@alias EntityHandle CBaseEntity|CEntityInstance|CBaseModelEntity|CBasePlayer|CHL2_Player|CBaseAnimating|CBaseFlex|CBaseCombatCharacter|CBodyComponent|CAI_BaseNPC|CBaseTrigger|CEnvEntityMaker|CInfoWorldLayer|CLogicRelay|CMarkupVolumeTagged|CEnvProjectedTexture|CPhysicsProp|CSceneEntity|CPointClientUIWorldPanel|CPointTemplate|CPointWorldText|CPropHMDAvatar|CPropVRHand
 
----Class that inherits all entity classes. Mostly used when creating entity classes.
----`EntityHandle` should still be used when handling and passing entity types.
----@class EntityClass : CBaseEntity,CEntityInstance,CBaseModelEntity,CBasePlayer,CHL2_Player,CBaseAnimating,CBaseFlex,CBaseCombatCharacter,CBodyComponent,CAI_BaseNPC,CBaseTrigger,CEnvEntityMaker,CInfoWorldLayer,CLogicRelay,CMarkupVolumeTagged,CEnvProjectedTexture,CPhysicsProp,CSceneEntity,CPointClientUIWorldPanel,CPointTemplate,CPointWorldText,CPropHMDAvatar,CPropVRHand
-local EntityClass = {}
----Save all entity data
-function EntityClass:Save()
-end
----Called automatically if defined
----@param loaded boolean
-function EntityClass:OnReady(loaded)
-end
----Called automatically if defined
----@param spawnkeys CScriptKeyValues
-function EntityClass:OnSpawn(spawnkeys)
-end
----Called automatically if defined
-function EntityClass:Think()
-end
----Called automatically if defined
-function EntityClass:ResumeThink()
-end
----Called automatically if defined
-function EntityClass:PauseThink()
-end
----@type boolean
-EntityClass.Initiated = false
----@type boolean
-EntityClass.IsThinking = false
-
 ---@class EHANDLE
 ---@alias ScriptScope table
 ---@alias COMMON_OPVAR_NAMES "skylight_proximity_array"|"skylight_invert_scalar_array"|"hotel_sub_basement_proximity_array"|"large_room_addin_array"|"small_room_invert_scalar_array"|"hotel_small_room_proximity_array"|"xen_proximity_array"
@@ -91,7 +62,7 @@ thisEntity = nil
 ---| 0 # SHAKE_START
 ---| 1 # SHAKE_STOP
 
----@class TypeIOInvoke
+---@class IOParams
 ---@field activator EntityHandle
 ---@field caller EntityHandle
 
@@ -109,8 +80,8 @@ thisEntity = nil
 ---@field pos Vector # Global vector where the trace hit.
 ---@field fraction number # Fraction from the start to end where the trace hit.
 ---@field hit boolean # Whether the trace hit something. Always present.
----@field startsolid boolean # Whether the trace started inside the entity. This parameter is set to nil if it is false.
----@field normal Vector # Global normal vector of the surface hit.
+---@field startsolid boolean? # Whether the trace started inside the entity. This parameter is set to nil if it is false.
+---@field normal Vector? # Global normal vector of the surface hit.
 
 ---@class TraceTableCollideable : TraceTableBase
 ---@field ent EntityHandle # Entity to trace against.
@@ -120,14 +91,14 @@ thisEntity = nil
 ---@class TraceTableHull : TraceTableBase
 ---@field min Vector # Minimum extents of the bounding box.
 ---@field max Vector # Maximum extents of the bounding box.
----@field mask integer # Collision type bitmask.
----@field ignore EntityHandle # Entity to ignore when tracing.
----@field enthit EntityHandle # Handle of the entity the trace hit.
+---@field mask integer? # Collision type bitmask.
+---@field ignore EntityHandle? # Entity to ignore when tracing.
+---@field enthit EntityHandle? # Handle of the entity the trace hit.
 
 ---@class TraceTableLine : TraceTableBase
----@field mask integer # Collision type bitmask.
----@field ignore EntityHandle # Entity to ignore when tracing.
----@field enthit EntityHandle # Handle of the entity the trace hit.
+---@field mask integer? # Collision type bitmask.
+---@field ignore EntityHandle? # Entity to ignore when tracing.
+---@field enthit EntityHandle? # Handle of the entity the trace hit.
 
 --#region Game Events
 
@@ -299,7 +270,7 @@ thisEntity = nil
 ---| "\"player_grabbed_ladder\"" #
 ---| "\"commentary_started\"" #
 ---| "\"commentary_stopped\"" #
----| "\"vr_controller_hint_create\"" # can create hints?
+---| "\"vr_controller_hint_create\"" #
 
 ---@alias GAME_EVENTS_CORE
 ---| "\"server_spawn\"" # As soon as a server starts.
@@ -695,6 +666,19 @@ thisEntity = nil
 ---@param tbl table
 function DeepPrintTable(tbl) end
 
+---Returns a string like "foo.nut:53"
+---with the source file and line number of its caller.
+---returns the empty string if it couldn't get the source file and line number of its caller.
+---@return string
+function _sourceline() end
+
+---A function to re-lookup a function by name every time.
+---Outside of developer mode this just returns the function.
+---Unsure of its use outside of dev mode.
+---@param scope table # Scope/context that the named function belongs in.
+---@param name string # Name of the function to wrap.
+function Dynamic_Wrap(scope, name) end
+
 --#region Math
 
 ---Returns the number of degrees difference between two yaw angles
@@ -711,7 +695,7 @@ function AnglesToVector(angle) end
 ---@param axis Vector
 ---@param angle number
 ---@return Quaternion
----@deprecated
+---@deprecated # Quaternions do not exist.
 function AxisAngleToQuaternion(axis, angle) end
 ---Compute the closest point relative to a vector on the OBB of an entity.
 ---@param entity EntityHandle
@@ -773,7 +757,7 @@ function RotatePosition(rotationOrigin, rotationAngle, vectorToRotate) end
 ---@param axis Vector
 ---@param angle number
 ---@return Quaternion
----@deprecated
+---@deprecated # Quaternions do not exist.
 function RotateQuaternionByAxisAngle(quat, axis, angle) end
 ---Find the delta between two QAngles.
 ---@param src QAngle
@@ -791,7 +775,7 @@ function RotationDeltaAsAngularVelocity(angle1, angle2) end
 ---@param q1 Quaternion
 ---@param t number
 ---@return Quaternion
----@deprecated
+---@deprecated # Quaternions do not exist.
 function SplineQuaternions(q0, q1, t) end
 ---Very basic interpolation of two vectors over time t on [0,1].
 ---@param vector1 Vector
@@ -827,7 +811,7 @@ function Deg2Rad(deg) end
 ---Convert radians to degrees.
 ---@param rad number
 ---@return number
-function Deg2Rad(rad) end
+function Rad2Deg(rad) end
 ---Linear interpolation of float values a and b over t [0,1].
 ---@param t number
 ---@param a number
@@ -1098,16 +1082,16 @@ function DestroyDamageInfo(info) end
 ---@param action string
 ---@param value string
 ---@param delay number
----@param activator EntityHandle?
----@param caller EntityHandle?
+---@param activator EntityHandle|nil
+---@param caller EntityHandle|nil
 function DoEntFire(target, action, value, delay, activator, caller) end
 ---Internal native function for EntFireByHandle().
 ---@param target EntityHandle
 ---@param action string
 ---@param value string
 ---@param delay number
----@param activator EntityHandle?
----@param caller EntityHandle?
+---@param activator EntityHandle|nil
+---@param caller EntityHandle|nil
 function DoEntFireByInstanceHandle(target, action, value, delay, activator, caller) end
 ---Generate an entity I/O event on all entities matching the specified target name. The script scope of the calling entity should be passed to the first parameter.
 ---@param scope ScriptScope
@@ -1178,8 +1162,8 @@ function PrecacheEntityListFromTable(groupSpawnTables, context) end
 ---@param modelName string
 ---@param context CScriptPrecacheContext
 function PrecacheModel(modelName, context) end
----model_folder|sound|soundfile|particle|particle_folder"
----@param resourceType string|"model_folder"|"sound"|"soundfile"|"particle"|"particle_folder"
+---@alias PrecacheTypes "model_folder"|"sound"|"soundfile"|"particle"|"particle_folder"
+---@param resourceType string|PrecacheTypes
 ---@param resourcePath string
 ---@param context CScriptPrecacheContext
 function PrecacheResource(resourceType, resourcePath, context) end
@@ -1195,8 +1179,8 @@ function SetRenderingEnabled(EHANDLE, enabled) end
 ---Asynchronously spawns a single entity from a table. A callback will be triggered when the spawning is complete, passing the handle of the entity as a parameter.
 ---@param classname string
 ---@param spawnKeys table
----@param callback function
----@param unknown unknown
+---@param callback fun(spawnedEnt: EntityHandle)
+---@param unknown unknown|`nil`
 function SpawnEntityFromTableAsynchronous(classname, spawnKeys, callback, unknown) end
 ---Synchronously spawns a single entity from a table
 ---@param classname string
@@ -1255,9 +1239,8 @@ function TraceLine(parameters) end
 --#region Sound
 
 ---Play named sound for all players.
----Function does not appear to exist.
 ---@param sound string
----@deprecated
+---@deprecated # Function does not appear to exist.
 function EmitGlobalSound(sound) end
 ---Play named sound on Entity.
 ---@param sound string
@@ -1367,11 +1350,10 @@ function GetListenServerHost() end
 ---@return string
 function GetMapName() end
 ---Execute a script file. Included in the current scope by default.
----Doesn't appear to exist, use DoIncludeScript instead.
 ---@param scriptFileName string
 ---@param scope ScriptScope|nil
 ---@return boolean
----@deprecated
+---@deprecated # Doesn't appear to exist, use `DoIncludeScript` instead.
 function IncludeScript(scriptFileName, scope) end
 ---If the given file doesn't exist, creates it with the given contents; does nothing if it exists
 ---Warning: Deprecated
@@ -1397,7 +1379,7 @@ function IsServer() end
 function IsInToolsMode() end
 ---Register as a listener for a game event from script.
 ---@param eventname GAME_EVENTS_ALL
----@param callback function
+---@param callback fun(params: GAME_EVENT_BASE)
 ---@param context nil|table # Context to pass as the first parameter of `callback`.
 ---@return integer # ID used to cancel with StopListeningToGameEvent().
 function ListenToGameEvent(eventname, callback, context) end
@@ -1528,7 +1510,7 @@ function vlua.contains(t, key) end
 ---@param key any
 ---@return integer
 function vlua.delete(t, key) end
----Implements Squirrel clone operator.
+---Implements Squirrel clone operator. This is shallow clone and will also assign the metatable.
 ---@param t table
 ---@return table
 function vlua.clone(t) end
@@ -1543,9 +1525,9 @@ function vlua.rawdelete(t, key) end
 ---@return integer
 function vlua.rawin(t, key) end
 ---Implements Squirrel find method for tables and strings. (o, substr, [startidx]) for strings, (o, value) for tables
----@param tbl table
----@param value any|string
----@return any
+---@param tbl table # Table to search.
+---@param value any|string # Value to search for.
+---@return any # Key associated with `value`.
 ---@overload fun(str: string, substr: string, startIndex: integer?): string|nil
 function vlua.find(tbl, value) end
 ---Implements Squirrel slice method for tables and strings.
@@ -1570,7 +1552,7 @@ function vlua.resize(t, size, fill) end
 ---Appears to append array onto o. array must be an ordered table.
 ---@param o table
 ---@param array table
----@return any[]
+---@return table?
 function vlua.extend(o, array) end
 ---Implements Squirrel map method for tables.
 ---Passes values one at a time to function first param. Return a value to be added to resulting table.
@@ -1611,6 +1593,8 @@ function vlua.select(conditional, valueIfTrue, valueIfFalse) end
 --#region
 
 --#region CBaseEntity
+
+---Inheritance for CBaseEntity and CEntityInstance might be reversed.
 
 ---The base class for entities.
 ---@class CBaseEntity
@@ -1690,10 +1674,10 @@ function CBaseEntity:GetAngularVelocity() end
 ---Get Base velocity. Only functional on prop_dynamic entities with the Scripted Movement property set.
 ---@return Vector
 function CBaseEntity:GetBaseVelocity() end
----Get a vector containing max bounds, centered on object
+---Get a vector containing max bounds, in local space.
 ---@return Vector
 function CBaseEntity:GetBoundingMaxs() end
----Get a vector containing min bounds, centered on object
+---Get a vector containing min bounds, in local space.
 ---@return Vector
 function CBaseEntity:GetBoundingMins() end
 
@@ -1765,11 +1749,12 @@ function CBaseEntity:GetRightVector() end
 ---@return EntityHandle
 function CBaseEntity:GetRootMoveParent() end
 ---Returns float duration of the sound.
----Returns 2 for all sounds.
+---
+---**Note:** Returns 2 for all sounds unless `vsnd_duration` property is set on sound event (not all events support this).
+---
 ---@param soundName string
 ---@param actormodelname string|""
 ---@return number
----@deprecated
 function CBaseEntity:GetSoundDuration(soundName, actormodelname) end
 ---Returns the spawn group handle of this entity.
 ---@return integer
@@ -1853,7 +1838,7 @@ function CBaseEntity:SetContext(name, value, duration) end
 ---@param duration number
 function CBaseEntity:SetContextNum(name, value, duration) end
 ---Set a context think function on this entity.
----@param thinkName string
+---@param thinkName string|nil
 ---@param thinkFunction function?
 ---@param initialDelay number
 function CBaseEntity:SetContextThink(thinkName, thinkFunction, initialDelay) end
@@ -1889,14 +1874,14 @@ function CBaseEntity:SetMass(mass) end
 ---Set entity max health
 ---@param maxHP integer
 function CBaseEntity:SetMaxHealth(maxHP) end
----	Set entity absolute origin
+---Set entity absolute origin
 ---@param origin Vector
 function CBaseEntity:SetOrigin(origin) end
----	Sets this entity's owner.
----@param owningEntity EntityHandle
+---Sets this entity's owner.
+---@param owningEntity EntityHandle|nil
 function CBaseEntity:SetOwner(owningEntity) end
 ---Set the parent for this entity. The attachment is optional, pass an empty string to not use it.
----@param parent EntityHandle
+---@param parent EntityHandle|nil
 ---@param attachmentName string|""
 function CBaseEntity:SetParent(parent, attachmentName) end
 ---Set entity team.
@@ -1976,8 +1961,8 @@ function CEntityInstance:DisconnectRedirectedOutput(output, functionName, entity
 function CEntityInstance:entindex() end
 ---Fire an entity output.
 ---@param outputName string
----@param activator EntityHandle
----@param caller EntityHandle
+---@param activator EntityHandle|nil
+---@param caller EntityHandle|nil
 ---@param parameter string|nil # The parameter override to send with the output.
 ---@param delay number
 function CEntityInstance:FireOutput(outputName, activator, caller, parameter, delay) end
@@ -2056,7 +2041,7 @@ function CBaseModelEntity:SetBodygroup(group, value) end
 function CBaseModelEntity:SetBodygroupByName(group, value) end
 ---Sets the light group of the entity.
 ---@param lightGroup string
-function CBaseModelEntity: SetLightGroup(lightGroup) end
+function CBaseModelEntity:SetLightGroup(lightGroup) end
 ---Set the material group of this entity.
 ---@param name string # Case-insensitive.
 function CBaseModelEntity:SetMaterialGroup(name) end
@@ -2103,10 +2088,10 @@ CBasePlayer = {}
 function CBasePlayer:AreChaperoneBoundsVisible() end
 ---Returns the value of the analog action for the given hand. See Analog Input Actions for action index values and return types.
 ---Note: Only reports input when headset is awake. Will still transmit input when controllers lose tracking.
----@param nLiteralHandType integer
----@param nAnalogAction integer
+---@param literalHandType integer
+---@param analogAction ENUM_ANALOG_INPUT_ACTIONS
 ---@return Vector
-function CBasePlayer:GetAnalogActionPositionForHand(nLiteralHandType, nAnalogAction) end
+function CBasePlayer:GetAnalogActionPositionForHand(literalHandType, analogAction) end
 ---Returns the HMD anchor entity for this player if it exists.
 ---@return CEntityInstance|nil
 function CBasePlayer:GetHMDAnchor() end
@@ -2199,24 +2184,24 @@ CBaseAnimating = {}
 ---@return number
 function CBaseAnimating:ActiveSequenceDuration() end
 ---Get the attachment id's angles as a p,y,r vector
----@param iAttachment integer
+---@param attachmentIndex integer
 ---@return Vector
-function CBaseAnimating:GetAttachmentAngles(iAttachment) end
+function CBaseAnimating:GetAttachmentAngles(attachmentIndex) end
 ---Get the attachment id's forward vector.
----@param iAttachment integer
+---@param attachmentIndex integer
 ---@return Vector
-function CBaseAnimating:GetAttachmentForward(iAttachment) end
+function CBaseAnimating:GetAttachmentForward(attachmentIndex) end
 ---Get the attachment id's origin vector
----@param iAttachment integer
+---@param attachmentIndex integer
 ---@return Vector
-function CBaseAnimating:GetAttachmentOrigin(iAttachment) end
+function CBaseAnimating:GetAttachmentOrigin(attachmentIndex) end
 ---Get the cycle of the animation, a [0-1] range.
 ---@return number
 function CBaseAnimating:GetCycle() end
 ---Get the value of the given animGraph parameter.
----@param pszParam string
----@return table
-function CBaseAnimating:GetGraphParameter(pszParam) end
+---@param paramName string
+---@return any
+function CBaseAnimating:GetGraphParameter(paramName) end
 ---Get scale of entity's model.
 ---@return number
 function CBaseAnimating:GetModelScale() end
@@ -2227,57 +2212,57 @@ function CBaseAnimating:GetSequence() end
 ---@return boolean
 function CBaseAnimating:IsSequenceFinished() end
 ---	Registers a listener for string AnimTags, replaces existing script listener if any.
----@param animTagListenerFunc function
+---@param animTagListenerFunc fun(tagName:string, status:integer)
 function CBaseAnimating:RegisterAnimTagListener(animTagListenerFunc) end
 ---Sets the active sequence by name, resetting the current cycle
----@param pSequenceName string
-function CBaseAnimating:ResetSequence(pSequenceName) end
+---@param sequenceName string
+function CBaseAnimating:ResetSequence(sequenceName) end
 ---Get the named attachment id
----@param pAttachmentName string
+---@param attachmentName string
 ---@return integer
-function CBaseAnimating:ScriptLookupAttachment(pAttachmentName) end
+function CBaseAnimating:ScriptLookupAttachment(attachmentName) end
 ---Returns the duration in seconds of the given sequence name.
----@param pSequenceName string
+---@param sequenceName string
 ---@return number
-function CBaseAnimating:SequenceDuration(pSequenceName) end
+function CBaseAnimating:SequenceDuration(sequenceName) end
 ---Pass the desired look target in world space to the graph.
----@param vValue Vector
-function CBaseAnimating:SetGraphLookTarget(vValue) end
+---@param position Vector
+function CBaseAnimating:SetGraphLookTarget(position) end
 ---Set the specific param value, type is inferred from the type in script.
 ---@param pszParam string
 ---@param svArg table
 function CBaseAnimating:SetGraphParameter(pszParam, svArg) end
 ---Set the specific boolean parameter on or off.
----@param szName string
----@param bValue boolean
-function CBaseAnimating:SetGraphParameterBool(szName, bValue) end
+---@param name string
+---@param value boolean
+function CBaseAnimating:SetGraphParameterBool(name, value) end
 ---Pass the enum (int) value to the specified param.
----@param szName string
----@param nValue integer
-function CBaseAnimating:SetGraphParameterEnum(szName, nValue) end
+---@param name string
+---@param value integer
+function CBaseAnimating:SetGraphParameterEnum(name, value) end
 ---Pass the float value to the specified parameter.
----@param szName string
----@param flValue number
-function CBaseAnimating:SetGraphParameterFloat(szName, flValue) end
+---@param name string
+---@param value number
+function CBaseAnimating:SetGraphParameterFloat(name, value) end
 ---Pass the int value to the specified param.
----@param szName string
----@param nValue integer
-function CBaseAnimating:SetGraphParameterInt(szName, nValue) end
+---@param name string
+---@param value integer
+function CBaseAnimating:SetGraphParameterInt(name, value) end
 ---Pass the vector value to the specified param in the graph.
----@param szName string
----@param vValue Vector
-function CBaseAnimating:SetGraphParameterVector(szName, vValue) end
+---@param name string
+---@param value Vector
+function CBaseAnimating:SetGraphParameterVector(name, value) end
 ---Sets the model's scale to scale, so if a unit had its model scale at 1, and you use SetModelScale(10.0), it would set the scale to 10.0.
 ---@param scale number
 function CBaseAnimating:SetModelScale(scale) end
 ---Set the specified pose parameter to the specified value.
----@param szName string
----@param fValue number
+---@param name string
+---@param value number
 ---@return number
-function CBaseAnimating:SetPoseParameter(szName, fValue) end
+function CBaseAnimating:SetPoseParameter(name, value) end
 ---Sets the active sequence by name, keeping the current cycle.
----@param pSequenceName string
-function CBaseAnimating:SetSequence(pSequenceName) end
+---@param sequenceName string
+function CBaseAnimating:SetSequence(sequenceName) end
 ---Stop the current animation by setting playback rate to 0.0.
 function CBaseAnimating:StopAnimation() end
 ---Unregisters the current string AnimTag listener, if any
@@ -2339,6 +2324,7 @@ function CBaseCombatCharacter:ShootPosition(hand, unknown) end
 
 --#region CBodyComponent
 
+---Exists in global environment but doesn't seem to be used by any entity.
 ---No Description Set (inherits from what?)
 ---@class CBodyComponent
 CBodyComponent = {}
@@ -2508,7 +2494,7 @@ function Entities:First() end
 ---@return CHL2_Player
 function Entities:GetLocalPlayer() end
 ---Continue an iteration over the list of entities, providing reference to a previously found entity
----@param startFrom EntityHandle What happens if starting from nil?
+---@param startFrom EntityHandle|nil # If nil, works the same as `Entities:First()`
 ---@return EntityHandle
 function Entities:Next(startFrom) end
 
@@ -2524,10 +2510,10 @@ CAI_BaseNPC = {}
 ---@return table
 function CAI_BaseNPC:GetSquad() end
 ---Set a position goal and start moving.
----@param vPos Vector
----@param bRun boolean
----@param flSuccessTolerance number
-function CAI_BaseNPC:NpcForceGoPosition(vPos, bRun, flSuccessTolerance) end
+---@param pos Vector
+---@param run boolean
+---@param successTolerance number
+function CAI_BaseNPC:NpcForceGoPosition(pos, run, successTolerance) end
 ---Removes the NPC's current goal.
 function CAI_BaseNPC:NpcNavClearGoal() end
 ---Get the position of the current goal.
@@ -2588,8 +2574,8 @@ function CEnvEntityMaker:SpawnEntityAtEntityOrigin(entity) end
 ---@param angles Vector
 function CEnvEntityMaker:SpawnEntityAtLocation(origin, angles) end
 ---Create an entity at the location of a named entity
----@param pszName string
-function CEnvEntityMaker:SpawnEntityAtNamedEntityOrigin(pszName) end
+---@param name string
+function CEnvEntityMaker:SpawnEntityAtNamedEntityOrigin(name) end
 
 --#endregion
 
@@ -2600,7 +2586,6 @@ function CEnvEntityMaker:SpawnEntityAtNamedEntityOrigin(pszName) end
 ---@class CEntityScriptFramework
 -- No methods available.
 EntityFramework = {}
---TEST HOOKS
 
 --#endregion
 
@@ -2622,9 +2607,9 @@ function CInfoWorldLayer:ShowWorldLayer() end
 ---@class CLogicRelay : CEntityInstance
 CLogicRelay = {}
 ---Trigger(hActivator, hCaller) : Triggers the logic_relay
----@param hActivator EntityHandle
----@param hCaller EntityHandle
-function CLogicRelay:Trigger(hActivator, hCaller) end
+---@param activator EntityHandle|nil
+---@param caller EntityHandle|nil
+function CLogicRelay:Trigger(activator, caller) end
 
 --#endregion
 
@@ -2777,7 +2762,7 @@ debugoverlay = {}
 ---@param float_3 number
 ---@param bool_4 boolean
 ---@param float_5 number
----@deprecated
+---@deprecated # Quaternions do not exist.
 function debugoverlay:Axis(Vector_1, Quaternion_2, float_3, bool_4, float_5) end
 ---Draws a world-space axis-aligned wireframe box. Specify bounds in world space.
 ---@param min Vector
@@ -2800,7 +2785,7 @@ function debugoverlay:Box(min, max, red, green, blue, alpha, noDepthTest, second
 ---@param int_8 integer
 ---@param bool_9 boolean
 ---@param float_10 number
----@deprecated
+---@deprecated # Quaternions do not exist.
 function debugoverlay:BoxAngles(Vector_1, Vector_2, Vector_3, Quaternion_4, int_5, int_6, int_7, int_8, bool_9, float_10) end
 ---Draws a capsule. Specify base in world space.
 ---@param Vector_1 Vector
@@ -2813,7 +2798,7 @@ function debugoverlay:BoxAngles(Vector_1, Vector_2, Vector_3, Quaternion_4, int_
 ---@param int_8 integer
 ---@param bool_9 integer
 ---@param float_10 number
----@deprecated
+---@deprecated # Quaternions do not exist.
 function debugoverlay:Capsule(Vector_1, Quaternion_2, float_3, float_4, int_5, int_6, int_7, int_8, bool_9, float_10) end
 ---Draws a circle. Specify center in world space.
 ---@param Vector_1 Vector
@@ -2825,7 +2810,7 @@ function debugoverlay:Capsule(Vector_1, Quaternion_2, float_3, float_4, int_5, i
 ---@param int_7 integer
 ---@param bool_8 boolean
 ---@param float_9 number
----@deprecated
+---@deprecated # Quaternions do not exist.
 function debugoverlay:Circle(Vector_1, Quaternion_2, float_3, int_4, int_5, int_6, int_7, bool_8, float_9) end
 ---Draws a circle oriented to the screen. Specify center in world space.
 ---@param origin Vector
@@ -2840,7 +2825,7 @@ function debugoverlay:CircleScreenOriented(origin, radius, red, green, blue, alp
 ---Draws a wireframe cone.
 ---@param pos Vector # Starting tip for the cone.
 ---@param axis Vector # Normalized direction the cone faces.
----@param radius number # Radius of the cone.
+---@param radiusRadians number # Radius of the cone in radians.
 ---@param distance number # How far the cone will draw.
 ---@param red integer
 ---@param green integer
@@ -2848,7 +2833,7 @@ function debugoverlay:CircleScreenOriented(origin, radius, red, green, blue, alp
 ---@param alpha integer
 ---@param noDepthTest boolean
 ---@param seconds number
-function debugoverlay:Cone(pos, axis, radius, distance, red, green, blue, alpha, noDepthTest, seconds) end
+function debugoverlay:Cone(pos, axis, radiusRadians, distance, red, green, blue, alpha, noDepthTest, seconds) end
 ---Draws a screen-aligned cross. Specify origin in world space.
 ---@param origin Vector
 ---@param radius number
@@ -2879,7 +2864,7 @@ function debugoverlay:Cross3D(origin, radius, red, green, blue, alpha, noDepthTe
 ---@param int_7 integer
 ---@param bool_8 boolean
 ---@param float_9 number
----@deprecated
+---@deprecated # Quaternions do not exist.
 function debugoverlay:Cross3DOriented(Vector_1, Quaternion_2, float_3, int_4, int_5, int_6, int_7, bool_8, float_9) end
 ---Draws a dashed line. Specify endpoint's in world space.
 ---@param startPos Vector
@@ -2901,21 +2886,21 @@ function debugoverlay:EntityAttachments(ehandle, size, seconds) end
 ---Draws the axis of the entity origin
 ---@param ehandle EHANDLE
 ---@param size number
----@param unknown boolean # False made it draw
+---@param noDepthTest boolean
 ---@param seconds number
-function debugoverlay:EntityAxis(ehandle, size, unknown, seconds) end
+function debugoverlay:EntityAxis(ehandle, size, noDepthTest, seconds) end
 ---Draws bounds of an entity.
 ---How does this work?
----@param ehandle_1 EHANDLE
----@param int_2 integer
----@param int_3 integer
----@param int_4 integer
----@param int_5 integer
----@param bool_6 boolean
----@param float_7 number
-function debugoverlay:EntityBounds(ehandle_1, int_2, int_3, int_4, int_5, bool_6, float_7) end
----Draws the skeleton of the entity
 ---@param ehandle EHANDLE
+---@param red integer
+---@param green integer
+---@param blue integer
+---@param alpha integer
+---@param noDepthTest boolean
+---@param seconds number
+function debugoverlay:EntityBounds(ehandle, red, green, blue, alpha, noDepthTest, seconds) end
+---Draws the skeleton of the entity
+---@param ehandle EHANDLE # Use entity:GetEntityHandle()
 ---@param seconds number
 function debugoverlay:EntitySkeleton(ehandle, seconds) end
 ---Draws text on an entity
@@ -2937,7 +2922,7 @@ function debugoverlay:EntityText(ehandle, heightOffset, text, red, green, blue, 
 ---@param int_5 integer
 ---@param int_6 integer
 ---@param float_7 number
----@deprecated
+---@deprecated # Vector2D does not exist.
 function debugoverlay:FilledRect2D(Vector2D_1, Vector2D_2, int_3, int_4, int_5, int_6, float_7) end
 ---Draws a horizontal arrow. Specify endpoint's in world space.
 ---@param startPos Vector
@@ -2969,31 +2954,31 @@ function debugoverlay:Line(startPos, endPos, red, green, blue, alpha, noDepthTes
 ---@param int_5 integer
 ---@param int_6 integer
 ---@param float_7 number
----@deprecated
+---@deprecated # Vector2D does not exist.
 function debugoverlay:Line2D(Vector2D_1, Vector2D_2, int_3, int_4, int_5, int_6, float_7) end
 ---Pops the identifier used to group overlays. Overlays marked with this identifier can be deleted in a big batch.
 function debugoverlay:PopDebugOverlayScope() end
 ---Pushes an identifier used to group overlays. Deletes all existing overlays using this overlay id.
----@param utlstringtoken_1 string
-function debugoverlay:PushAndClearDebugOverlayScope(utlstringtoken_1) end
+---@param scopeName string
+function debugoverlay:PushAndClearDebugOverlayScope(scopeName) end
 ---Pushes an identifier used to group overlays. Overlays marked with this identifier can be deleted in a big batch.
----@param utlstringtoken_1 string
-function debugoverlay:PushDebugOverlayScope(utlstringtoken_1) end
+---@param scopeName string
+function debugoverlay:PushDebugOverlayScope(scopeName) end
 ---Removes all overlays marked with a specific identifier, regardless of their lifetime.
----@param utlstringtoken_1 string
-function debugoverlay:RemoveAllInScope(utlstringtoken_1) end
+---@param scopeName string
+function debugoverlay:RemoveAllInScope(scopeName) end
 ---Draws a solid cone. Specify endpoint and direction in world space.
 ---@param startPos Vector
----@param endPos Vector
----@param unknown_1 number
----@param unknown_2 number
+---@param direction Vector
+---@param radiusRadians number # Seems to cap out at 180 which displays 90 deg radius.
+---@param length number
 ---@param red integer
 ---@param green integer
 ---@param blue integer
 ---@param alpha integer
 ---@param noDepthTest boolean
 ---@param seconds number
-function debugoverlay:SolidCone(startPos, endPos, unknown_1, unknown_2, red, green, blue, alpha, noDepthTest, seconds) end
+function debugoverlay:SolidCone(startPos, direction, radiusRadians, length, red, green, blue, alpha, noDepthTest, seconds) end
 ---Draws a wireframe sphere. Specify center in world space.
 ---@param position Vector
 ---@param radius number
@@ -3015,7 +3000,7 @@ function debugoverlay:Sphere(position, radius, red, green, blue, alpha, noDepthT
 ---@param int_8 integer
 ---@param int_9 integer
 ---@param float_10 number
----@deprecated
+---@deprecated # Quaternions do not exist.
 function debugoverlay:SweptBox(Vector_1, Vector_2, Vector_3, Vector_4, Quaternion_5, int_6, int_7, int_8, int_9, float_10) end
 ---Draws 2D text. Specify origin in world space.
 ---@param position Vector
@@ -3040,7 +3025,7 @@ function debugoverlay:Text(position, heightOffset, text, unknown, red, green, bl
 ---@param Vector2D_8 Vector2D
 ---@param Vector2D_9 Vector2D
 ---@param float_10 number
----@deprecated
+---@deprecated # Vector2D does not exist.
 function debugoverlay:Texture(string_1, Vector2D_2, Vector2D_3, int_4, int_5, int_6, int_7, Vector2D_8, Vector2D_9, float_10) end
 ---Draws a filled triangle in world space for the specific amount of seconds (-1 means forever).
 ---@param point1 Vector
@@ -3065,7 +3050,7 @@ function debugoverlay:UnitTestCycleOverlayRenderType() end
 ---@param int_7 integer
 ---@param bool_8 boolean
 ---@param float_9 number
----@deprecated
+---@deprecated # Quaternions do not exist.
 function debugoverlay:VectorText3D(Vector_1, Quaternion_2, string_3, int_4, int_5, int_6, int_7, bool_8, float_9) end
 ---Draws a vertical arrow. Specify endpoint's in world space.
 ---@param startPos Vector
@@ -3202,8 +3187,8 @@ function CPointTemplate:ForceSpawn() end
 ---GetSpawnedEntities() : Get the list of the most recent spawned entities
 function CPointTemplate:GetSpawnedEntities() end
 ---SetSpawnCallback( hCallbackFunc, hCallbackScope, hCallbackData ) : Set a callback for when the template spawns entities. The spawned entities will be passed in as an array.
----@param hCallbackFunc handle
----@param hCallbackScope handle
+---@param hCallbackFunc fun(context: table|EntityHandle[], entities: EntityHandle[]|nil)
+---@param hCallbackScope handle|nil
 function CPointTemplate:SetSpawnCallback(hCallbackFunc, hCallbackScope) end
 
 --#endregion
@@ -3325,7 +3310,7 @@ function ParticleManager:SetParticleControl(particleID, controlIndex, controlDat
 ---@param controlIndex integer
 ---@param entity EntityHandle
 ---@param attachType ENUM_PATTACH
----@param attachment string
+---@param attachment string|nil # The model attachment to use. Set nil for no attachment instead of blank string to avoid warnings.
 ---@param origin Vector
 ---@param unknown boolean
 function ParticleManager:SetParticleControlEnt(particleID, controlIndex, entity, attachType, attachment, origin, unknown) end
@@ -3503,7 +3488,7 @@ function Convars:GetBool(name) end
 function Convars:GetCommandClient() end
 ---GetFloat(name) : returns the convar as a float. May return nil if no such convar.
 ---@param name string
----@return float|nil
+---@return number|nil
 function Convars:GetFloat(name) end
 ---GetInt(name) : returns the convar as an int. May return nil if no such convar.
 ---@param name string
@@ -3513,9 +3498,9 @@ function Convars:GetInt(name) end
 ---@param name string
 ---@return string|nil
 function Convars:GetStr(name) end
----RegisterCommand(name, fn, helpString, flags) : register a console command.
----@param name string
----@param callback function
+---Register a console command with a callback function.
+---@param name string # Name of the command as it appears in the console.
+---@param callback fun(_:string, ...:string) # Callback function. Command name is passed to first function and all others are passed after.
 ---@param helpText string
 ---@param flags integer
 function Convars:RegisterCommand(name, callback, helpText, flags) end
@@ -3646,7 +3631,7 @@ function Uint64:ToHexString() end
 ---@field y number Yaw angle.
 ---@field z number Roll angle.
 ---@field __index string
-QAngleClass = {}
+local QAngleClass = {}
 ---Creates a new QAngle.
 ---@param pitch number?
 ---@param yaw number?
@@ -3685,7 +3670,7 @@ function QAngleClass:Up() end
 ---**Bug: This class is broken and cannot be instantiated.**
 ---@class Quaternion
 ---@deprecated
-Quaternion = {}
+local Quaternion = {}
 
 --#endregion
 
@@ -3703,7 +3688,7 @@ Quaternion = {}
 ---@operator mul(Vector|number): Vector Overloaded * returns the vectors multiplied together. can also be used to multiply with scalars.
 ---@operator sub(Vector|number): Vector
 ---@operator unm: Vector
-VectorClass = {}
+local VectorClass = {}
 ---Creates a new vector with the specified Cartesian coordinates.
 ---Can pass zero arguments for a zeroed Vector.
 ---@param x number?
@@ -3716,9 +3701,7 @@ function Vector(x, y, z) end
 ---@return boolean
 function VectorClass:__eq(vector) end
 ---Overloaded .. Converts vectors to strings
----Does not appear to work.
 ---@return string
----@deprecated
 function VectorClass:__tostring() end
 ---Cross product of two vectors.
 ---@param vector Vector
@@ -3735,9 +3718,9 @@ function VectorClass:Length() end
 ---@return number
 function VectorClass:Length2D() end
 ---Linear interpolation between the vector and the passed in target over t = [0,1].
----@param target Vector
----@param t number
----@return Vector
+---@param target Vector # The target vector to interpolate towards.
+---@param t number # The interpolation factor, ranging from 0 to 1.
+---@return Vector # The resulting vector after linear interpolation.
 function VectorClass:Lerp(target, t) end
 ---Returns the vector normalized.
 ---@return Vector
