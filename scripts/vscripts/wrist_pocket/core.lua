@@ -324,22 +324,10 @@ local function PlayerStoredItemInItemHolder(data)
                 -- print("Replacing wrist icon with", replace_model)
 
             elseif USE_PARTICLE_FOR_UNREGISTERED then
-                -- NOTE: For some reason the particle will not appear on stored props
-                --       after a game load, so as a work around I am creating a matching
-                --       proxy prop which needs to be killed later.
-                --       If you have any idea why this happens please let me know.
-                local pt_model = SpawnEntityFromTableSynchronous("prop_dynamic_override",{
-                    targetname="__wrist_particle_model_"..wrist_id,
-                    model = last_released:GetModelName(),
-                    rendermode = "kRenderNone",
-                    disableshadows = "1",
-                    solid = "0",
-                })
-                pt_model:SetAbsScale(0.01)
-                -- Setting as parent means it should be killed automatically
-                pt_model:SetParent(icon, "")
-                StoredIconData[wrist_id].particle = createWristParticle(icon, pt_model, last_released:WristColor())
-                icon:SaveEntity("wrist_particle_model",pt_model)
+                -- Change the model so the particle can use it
+                icon:SetModel(last_released:GetModelName())
+                StoredIconData[wrist_id].particle = createWristParticle(icon, icon, last_released:WristColor())
+                icon:SaveBoolean("is_particle", true)
                 icon:SetRenderAlpha(0)
                 -- print("Using particle")
 
@@ -378,10 +366,10 @@ RegisterPlayerEventCallback("player_activate", function(params)
             local icon = Entities:FindByName(nil, "__stored_wrist_model_"..i)
             if icon then
                 local stored_ent = icon:LoadEntity("wrist_entity", nil)--[[@as CPhysicsProp]]
-                local particle_ent = icon:LoadEntity("wrist_particle_model", nil)
+                local is_particle = icon:LoadBoolean("is_particle", false)
                 if stored_ent then
-                    if particle_ent then
-                        StoredIconData[i].particle = createWristParticle(icon, particle_ent, stored_ent:WristColor())
+                    if is_particle then
+                        StoredIconData[i].particle = createWristParticle(icon, icon, stored_ent:WristColor())
                     end
                     SetWristIconTransforms(i, icon, stored_ent)
                 end
