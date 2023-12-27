@@ -149,9 +149,9 @@ end
 
 ---Updates the wrist icons transforms to the values defined in ModelDoc
 ---using attachments "wrist_origin" and "wrist_angle".
----@param force? boolean
+---@param forceUpdate? boolean
 ---@return number
-local function UpdateWristOffset(_, force)
+local function UpdateWristOffset(_, forceUpdate)
     for i = 1, #StoredIconData do
         local icon = StoredIconData[i].handle
         -- If the icon has a move parent then it is attached to wrist,
@@ -162,7 +162,7 @@ local function UpdateWristOffset(_, force)
                 local s = icon:GetAbsScale()
                 ParticleManager:SetParticleControl(StoredIconData[i].particle, 2, Vector(s,s,s))
             end
-            if StoredIconData[i].should_update or force then
+            if StoredIconData[i].should_update or forceUpdate then
                 if icon:GetMoveParent() ~= nil then
                     icon:SetLocalScale(StoredIconData[i].scale)
                     -- Transform attaching origins to entity space so we're working with
@@ -193,7 +193,7 @@ local last_opposite
 ---@param data PLAYER_EVENT_ITEM_RELEASED
 local function ItemReleased(data)
     last_released = data.item--[[@as CPhysicsProp]]
-    last_opposite = data.hand_opposite
+    last_opposite = data.otherhand
     -- prints("Player drop", data.item_name, data.item, data.item:GetModelName(), "from "..(data.hand:GetHandID() == 0 and "left" or "right").." hand")
 end
 RegisterPlayerEventCallback("item_released", ItemReleased)
@@ -276,7 +276,7 @@ local function createWristParticle(icon, model_entity, color)
     elseif color == "wrist_blue" then name = "particles/wrist_pocket/wrist_holo_blue.vpcf"
     end
     local pt = ParticleManager:CreateParticle(name, 1, icon)
-    ParticleManager:SetParticleControlEnt(pt, 1, model_entity, 0, "", Vector(), false)
+    ParticleManager:SetParticleControlEnt(pt, 1, model_entity, 0, nil, Vector(), false)
     local s = icon:GetAbsScale()
     ParticleManager:SetParticleControl(pt, 2, Vector(s,s,s))
     return pt
@@ -366,14 +366,14 @@ local function WristPrecache(context)
     PrecacheResource("particle_folder", "particles/wrist_pocket", context)
 end
 
-RegisterPlayerEventCallback("player_activate", function(data)
-    ---@cast data PLAYER_EVENT_PLAYER_ACTIVATE
+---@param params PLAYER_EVENT_PLAYER_ACTIVATE
+RegisterPlayerEventCallback("player_activate", function(params)
     if UPDATE_ICONS_WITH_THINK then
         Player:SetThink(UpdateWristOffset, "UpdateWristOffsetThink", UPDATE_INTERVAL)
     end
 
     -- On game load recalculate the icon transforms.
-    if data.game_loaded then
+    if params.type ~= "spawn" then
         for i = 1, 2 do
             local icon = Entities:FindByName(nil, "__stored_wrist_model_"..i)
             if icon then
