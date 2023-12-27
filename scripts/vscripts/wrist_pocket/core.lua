@@ -380,9 +380,6 @@ end)
 
 
 
-
-local g = _G
-
 ---Gets or sets the wrist origin for this prop.
 ---If no params are supplied then this works as a getter.
 ---@param x? number|Vector # Default is 0
@@ -402,9 +399,9 @@ function CPhysicsProp:WristOrigin(x, y, z)
         return self:LoadVector("wrist_origin", nil)
     end
 end
-g.WristOrigin = function(x, y, z)
-    getfenv(2).thisEntity:WristOrigin(x, y, z)
-end
+Expose(function(x, y, z)
+        getfenv(2).thisEntity:WristOrigin(x, y, z)
+end, "WristOrigin", _G)
 
 ---Gets or sets the wrist angle for this prop.
 ---If no params are supplied then this works as a getter.
@@ -425,9 +422,9 @@ function CPhysicsProp:WristAngle(x, y, z)
         return self:LoadVector("wrist_angle", nil)
     end
 end
-g.WristAngle = function(x, y, z)
+Expose(function(x, y, z)
     getfenv(2).thisEntity:WristAngle(x, y, z)
-end
+end, "WristAngle", _G)
 
 ---Gets or sets the wrist scale for this prop.
 ---If no params are supplied then this works as a getter.
@@ -442,9 +439,9 @@ function CPhysicsProp:WristScale(x)
         return self:LoadNumber("wrist_scale", nil)
     end
 end
-g.WristScale = function(x)
+Expose(function(x)
     getfenv(2).thisEntity:WristScale(x)
-end
+end, "WristScale", _G)
 
 ---Gets or sets the wrist scale for this prop.
 ---If no params are supplied then this works as a getter.
@@ -479,9 +476,9 @@ function CPhysicsProp:WristColor(color)
         ---@diagnostic enable: return-type-mismatch
     end
 end
-g.WristColor = function(x)
+Expose(function(x)
     getfenv(2).thisEntity:WristColor(x)
-end
+end, "WristColor", _G)
 
 
 
